@@ -1,45 +1,7 @@
 #ifndef SHADERS_HPP
 #define SHADERS_HPP
 
-const char *vertexShader1Source = "#version 330 core\n"
-  "layout (location = 0) in vec3 aPos;\n"
-  "void main()\n"
-  "{\n"
-  "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-  "}\0";
-  //orange
-const char *fragmentShader1Source = "#version 330 core\n"
-  "out vec4 FragColor;\n"
-  "void main()\n"
-  "{\n"
-  "   FragColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);\n"
-  "}\n\0";
-  //yellow
-const char *fragmentShader2Source = "#version 330 core\n"
-  "out vec4 FragColor;\n"
-  "void main()\n"
-  "{\n"
-  "   FragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);\n"
-  "}\n\0";
-
-const char *fragmentShader3Source = "#version 330 core\n"
-  "out vec4 FragColor;\n"
-  "void main()\n"
-  "{\n"
-  "   FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);\n"
-  "}\n\0";
-const char *fragmentShader4Source = "#version 330 core\n"
-  "out vec4 FragColor;\n"
-  "void main()\n"
-  "{\n"
-  "   FragColor = vec4(0.0f, 1.0f, 0.0f, 1.0f);\n"
-  "}\n\0";
-const char *fragmentShader5Source = "#version 330 core\n"
-  "out vec4 FragColor;\n"
-  "void main()\n"
-  "{\n"
-  "   FragColor = vec4(0.0f, 0.0f, 1.0f, 1.0f);\n"
-  "}\n\0";
+#include <array>
 
 struct ShaderProgram {
   unsigned int id;
@@ -47,14 +9,21 @@ struct ShaderProgram {
   unsigned int fragmentShader;
 };
 
-ShaderProgram createShaderProgram(const char *vertexShaderSource, const char *fragmentShaderSource) {
-  ShaderProgram program;
-  program.vertexShader = glCreateShader(GL_VERTEX_SHADER);
-  glShaderSource(program.vertexShader, 1, &vertexShaderSource, NULL);
-  glCompileShader(program.vertexShader);
-  program.fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(program.fragmentShader, 1, &fragmentShaderSource, NULL);
-  glCompileShader(program.fragmentShader);
-  return program;
+namespace ShaderSources {
+  extern const char* vertexShaderSource;
+  extern const char* fragmentShaderSources[];
 }
-#endif
+
+unsigned int compileShader(unsigned int type, const char* source);
+ShaderProgram createShaderProgram(const char* vertexShaderSource, const char* fragmentShaderSource);
+std::array<ShaderProgram, 5> createAllShaderPrograms();
+
+enum ShaderProgramID {
+  BLACK,
+  WHITE,
+  RED,
+  GREEN,
+  BLUE
+};
+
+#endif // SHADERS_HPP
