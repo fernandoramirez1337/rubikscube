@@ -1,133 +1,99 @@
-#ifndef OGL_MYLIB_HPP
-#define OGL_MYLIB_HPP
+#pragma once
 
-#include "shaders.hpp"
 #include <array>
 #include <cmath>
-#include <vector>
 
-#define FLOATS_PER_VERTEX 3
-#define COMPONENTS_PER_VERTEX 3
-
-namespace ogl {
-
+const float cero = 0.0f;
 class vector {
 public:
   float x, y, z;
 
-  constexpr vector(float x_ = 0.0f, float y_ = 0.0f, float z_ = 0.0f) noexcept : x(x_), y(y_), z(z_) {}
-  constexpr vector(const vector& v) noexcept = default;
+  vector(float x_ = cero, float y_ = cero, float z_ = cero)  : x(x_), y(y_), z(z_) {}
+  vector(const vector&)  = default;
   ~vector() = default;
+  vector& operator=(const vector&) = default;
 
-  [[nodiscard]] float length() const noexcept;
-  [[nodiscard]] vector normalize() const noexcept;
-  [[nodiscard]] float dot(const vector& v) const noexcept;
-  [[nodiscard]] vector cross(const vector& v) const noexcept;
+  float length() const;
+  vector normalize() const;
+  float dot(const vector&) const;
+  vector cross(const vector&) const;
 };
 
 class point {
 public:
   float x, y, z;
 
-  constexpr point(float x_ = 0.0f, float y_ = 0.0f, float z_ = 0.0f) noexcept : x(x_), y(y_), z(z_) {}
-  constexpr point(const point& other) noexcept = default;
+  point(float x_ = cero, float y_ = cero, float z_ = cero)  : x(x_), y(y_), z(z_) {}
+  point(const point&)  = default;
   ~point() = default;
-
-  point& operator=(const point& other) = default;
+  point& operator=(const point&) = default;
 };
 
-using matrix4 = std::array<std::array<float, 4>, 4>;
-
+const unsigned long cuatro = 4ul;
+using matrix4 = std::array<std::array<float, cuatro>, cuatro>;
 class matrix {
 protected:
   matrix4 m;
 
 public:
-  matrix() noexcept;
+  matrix();
 
-  [[nodiscard]] matrix operator*(const matrix& mat) const noexcept;
-  matrix& operator*=(const matrix& mat) noexcept;
-  [[nodiscard]] point operator*(const point& poi) const noexcept;
+  matrix operator*(const matrix&) const;
+  matrix& operator*=(const matrix&);
+  point operator*(const point&) const;
 
-  void set_identity() noexcept;
-  [[nodiscard]] const matrix4& get() const noexcept;
-  void set(const matrix4& mat) noexcept;
-  [[nodiscard]] matrix transpose() const noexcept;
+  void set_identity();
+  void set(const matrix4&);
+  const matrix4& get() const;
+  matrix transpose() const;
 };
 
 class scale : public matrix {
 public:
-  scale(float sx, float sy, float sz) noexcept;
+  scale(float,float,float);
 };
 
 class rotate_x : public matrix {
 public:
-  explicit rotate_x(float angle) noexcept;
+  explicit rotate_x(float);
 };
 
 class rotate_y : public matrix {
 public:
-  explicit rotate_y(float angle) noexcept;
+  explicit rotate_y(float);
 };
 
 class rotate_z : public matrix {
 public:
-  explicit rotate_z(float angle) noexcept;
+  explicit rotate_z(float);
 };
 
 class translation : public matrix {
 public:
-  translation(float tx, float ty, float tz) noexcept;
+  translation(float,float,float);
 };
 
-class projection : public matrix {
+class scale_inv : public matrix {
 public:
-  projection(float fov, float aspect, float near, float far) noexcept;
+  scale_inv(float,float,float);
 };
 
-class shape {
+class rotate_x_inv : public matrix {
 public:
-  std::vector<ogl::point> vertices;
-  ogl::point center;
-  std::vector<std::vector<unsigned int>> indices;
-
-  std::vector<unsigned int> EBOs;
-  unsigned int VAO;
-  unsigned int VBO;
-
-  shape();
-  ~shape();
-
-  shape(const shape&) = default;
-  shape& operator=(const shape&) = default;
-  shape(shape&&) noexcept;
-  shape& operator=(shape&&) noexcept;
-
-  void add_vertex(const ogl::point&);
-  void add_index(const std::vector<unsigned int>&);
-
-  [[nodiscard]] std::vector<float> get_vertices() const;
-  [[nodiscard]] std::vector<unsigned int> get_indices(size_t = 0) const;
-
-  shape& operator*=(const matrix& transform);
-  [[nodiscard]] shape operator*(const matrix& transform) const;
-
-  void rotate_around_center(const ogl::rotate_z& rotation_matrix);
-  void update_center();
-  void scale_around_center(const ogl::scale& scale_matrix);
-
-  void get_vertices(float* vertices_array) const;
-  void get_indices(unsigned int* indices_array, size_t base = 0) const;
-
-  void setup_gl();
-  void sub_data_gl();
-
-  void draw_gl(unsigned int render_mode, std::array<ShaderProgram, 5> shaderPrograms);
-
-  void move(const ogl::translation& translation_matrix);
-  void move_in_circle(float radius, float angle);
+  explicit rotate_x_inv(float);
 };
 
-} // namespace ogl
+class rotate_y_inv : public matrix {
+public:
+  explicit rotate_y_inv(float);
+};
 
-#endif // OGL_MYLIB_HPP
+class rotate_z_inv : public matrix {
+public:
+  explicit rotate_z_inv(float);
+};
+
+class translation_inv : public matrix {
+public:
+  translation_inv(float,float,float);
+};

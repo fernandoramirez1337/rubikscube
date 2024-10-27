@@ -1,61 +1,33 @@
-#ifndef MYSHAPES_HPP
-#define MYSHAPES_HPP
+#pragma once
 
-#include "mylib.hpp"
 #include <vector>
 
-ogl::translation moveRight(0.1f, 0.0f, 0.0f);
-ogl::translation moveLeft(-0.1f, 0.0f, 0.0f);
-ogl::translation moveUp(0.0f, 0.1f, 0.0f);
-ogl::translation moveDown(0.0f, -0.1f, 0.0f);
-ogl::scale scaleDown(0.90f, 0.90f, 1.0f);
-ogl::scale scaleUp(1.1f, 1.1f, 1.0f);
-ogl::rotate_z rotateZ(0.1f);
-ogl::rotate_z rotateZ_(-0.1f);
+#include "mylib.hpp"
 
-ogl::shape testShape;
-ogl::shape pizza1;
+#define FLOATS_PER_VERTEX 8
 
-void create_testShape() {
-  testShape.add_vertex(ogl::point(-0.5f, -0.5f, 0.0f));
-  testShape.add_vertex(ogl::point(0.5f, -0.5f, 0.0f));
-  testShape.add_vertex(ogl::point(0.0f, 0.5f, 0.0f));
-  testShape.add_index(std::vector<unsigned int>{0, 1, 2});
-  testShape.update_center();
-}
+class shape {
+public:
+  bool triangles, lines, textures;
+  std::vector<point> points;
+  std::vector<unsigned int> indicesLines, indicesTriangles;
+  std::vector<float> vertices;
+  point center;
 
-void create_pizza1() {
-  pizza1.add_vertex(ogl::point( 0.00f, 0.50f, 0.0f));
-  pizza1.add_vertex(ogl::point( 0.37f, 0.37f, 0.0f));
-  pizza1.add_vertex(ogl::point( 0.50f, 0.00f, 0.0f));
-  pizza1.add_vertex(ogl::point( 0.37f,-0.37f, 0.0f));
-  pizza1.add_vertex(ogl::point( 0.00f,-0.50f, 0.0f));
-  pizza1.add_vertex(ogl::point(-0.37f,-0.37f, 0.0f));
-  pizza1.add_vertex(ogl::point(-0.50f, 0.00f, 0.0f));
-  pizza1.add_vertex(ogl::point(-0.37f, 0.37f, 0.0f));
-  pizza1.add_vertex(ogl::point( 0.00f, 0.00f, 0.0f));
+  unsigned int EBO_Triangles, EBO_Lines, VAO, VBO, TXT;
 
-  // Indices for lines (outline and spokes)
-  pizza1.add_index(std::vector<unsigned int>{
-    0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 0,
-    0, 8, 1, 8, 2, 8, 3, 8, 4, 8, 5, 8, 6, 8, 7, 8
-  });
+  shape(bool l = true, bool t = true, bool tx = false) : lines(l), triangles(t), textures(tx) {};
+  ~shape();
+  void build();
+  void load_txt(const char *);
+  void load_points();
+  void update_buffer();
+  void update_center();
+  void bind_textures();
 
-  // Indices for triangles (filled pizza)
-  pizza1.add_index(std::vector<unsigned int>{
-    0, 1, 8,
-    1, 2, 8,
-    2, 3, 8,
-    3, 4, 8,
-    4, 5, 8,
-    5, 6, 8,
-    6, 7, 8,
-    7, 0, 8
-  });
+  shape& operator*=(const matrix&);
+  shape operator*(const matrix&) const;
 
-  pizza1.EBOs.resize(2);
-
-  pizza1.update_center();
-}
-
-#endif
+  void pretty_transform(const matrix&);
+  bool is_initialized() const { return VAO != 0; }
+};
