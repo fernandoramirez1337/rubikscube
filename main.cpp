@@ -110,19 +110,23 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
   if (key == GLFW_KEY_S && action == GLFW_PRESS) {
     square01 *= moveDown;
   }
-  if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
-  }
-  if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
-  }
-  if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
-  }
   if (key == GLFW_KEY_Z && action == GLFW_PRESS) {  
-    //cubo1.cubo.rotate_around_center(rotateZ);
     square01.pretty_transform(rotateZ);
   }
   if (key == GLFW_KEY_X && action == GLFW_PRESS) {
-    //cubo1.cubo.rotate_around_center(rotateZ_);
     square01.pretty_transform(rotateZ_);
+  }
+  if (key == GLFW_KEY_C && action == GLFW_PRESS) {  
+    square01.pretty_transform(rotateY);
+  }
+  if (key == GLFW_KEY_V && action == GLFW_PRESS) {
+    square01.pretty_transform(rotateY_);
+  }
+  if (key == GLFW_KEY_B && action == GLFW_PRESS) {  
+    square01.pretty_transform(rotateX);
+  }
+  if (key == GLFW_KEY_N && action == GLFW_PRESS) {
+    square01.pretty_transform(rotateX_);
   }
   if (key == GLFW_KEY_E && action == GLFW_PRESS) {
     //cubo1.cubo.scale_around_center(scaleUp);

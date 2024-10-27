@@ -24,10 +24,14 @@ const translation moveDown(0.0f, -0.1f, 0.0f);
 const scale scaleDown(0.90f, 0.90f, 1.0f);
 const scale scaleUp(1.1f, 1.1f, 1.0f);
 const rotate_z rotateZ(0.1f);
-const rotate_z rotateZ_(-0.1f);
+const rotate_z_inv rotateZ_(0.1f);
+const rotate_y rotateY(0.1f);
+const rotate_y_inv rotateY_(0.1f);
+const rotate_x rotateX(0.1f);
+const rotate_x_inv rotateX_(0.1f);
 
 // 0 lines 1 triangles 1 textures
-shape square01(0,1,1);
+shape square01(0,1,0);
 void build_square01() {
   /*
   square01.vertices = {
