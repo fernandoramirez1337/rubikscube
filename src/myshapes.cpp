@@ -43,6 +43,7 @@ shape::~shape() {
 
 void shape::build() {
   load_points();
+  update_center();
   glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
@@ -155,5 +156,12 @@ void shape::pretty_transform(const matrix& transform) {
   *this *= translation(-current_center.x, -current_center.y, -current_center.z);
   *this *= transform;
   *this *= translation(current_center.x, current_center.y, current_center.z);
+  update_center();
+}
+
+void shape::transform_around(const matrix& transform, const point& p) {
+  *this *= translation_inv(p.x, p.y, p.z);
+  *this *= transform;
+  *this *= translation(p.x, p.y, p.z);
   update_center();
 }

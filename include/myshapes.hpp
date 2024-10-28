@@ -29,5 +29,6 @@ public:
   shape operator*(const matrix&) const;
 
   void pretty_transform(const matrix&);
+  void transform_around(const matrix&, const point&);
   bool is_initialized() const { return VAO != 0; }
 };

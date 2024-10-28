@@ -6,13 +6,21 @@
 #include <vector>
 
 #include "workshop.cpp"
+#include "rubiks.hpp"
 #include "myshaders.hpp"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
-const unsigned int SCR_WIDTH = 1280;
-const unsigned int SCR_HEIGHT = 732;
+const unsigned int SCR_WIDTH = 800;
+const unsigned int SCR_HEIGHT = 600;
+
+float d_test01 = 0.05;
+cube test01(point( 0.5f, 0.5f,0.0f),d_test01);
+cube test02(point(-0.5f, 0.5f,0.0f),d_test01);
+cube test03(point( 0.5f,-0.5f,0.0f),d_test01);
+cube test04(point(-0.5f,-0.5f,0.0f),d_test01);
+rubiks test00(point(0,0,0),0.2);
 
 int main() {
   std::vector<shape*> shapes;
@@ -33,6 +41,8 @@ int main() {
   gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
   gladLoadGL();
 
+  glEnable(GL_DEPTH_TEST);
+  
   unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
   glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
   glCompileShader(vertexShader);
@@ -57,8 +67,16 @@ int main() {
   glDeleteShader(vertexShader);
   glDeleteShader(fragmentShader);
 
-  build_square01();
-  shapes.push_back(&square01);
+  test00.build();
+  test01.build();
+  test02.build();
+  test03.build();
+  test04.build();
+
+  shapes.push_back(&test01);
+  shapes.push_back(&test02);
+  shapes.push_back(&test03);
+  shapes.push_back(&test04);
 
   glUseProgram(shaderProgram);
   int useOverrideColorLoc = glGetUniformLocation(shaderProgram, "useOverrideColor");
@@ -68,8 +86,18 @@ int main() {
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+    
     for (auto*& s : shapes) {
+			glUniform1i(glGetUniformLocation(shaderProgram, "useTexture"), s->textures);
+			s->bind_textures();
+			glBindVertexArray(s->VAO);
+			glBindBuffer(GL_ARRAY_BUFFER, s->VBO);
+			glBufferData(GL_ARRAY_BUFFER, s->vertices.size() * sizeof(float), s->vertices.data(), GL_STATIC_DRAW);
+      glUniform1i(useOverrideColorLoc, 0);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, s->EBO_Triangles);
+			glDrawElements(GL_TRIANGLES, s->indicesTriangles.size(), GL_UNSIGNED_INT, 0);	
+    }
+    for (auto& s : test00.pieces) {
 			glUniform1i(glGetUniformLocation(shaderProgram, "useTexture"), s->textures);
 			s->bind_textures();
 			glBindVertexArray(s->VAO);
@@ -99,62 +127,106 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     glfwSetWindowShouldClose(window, true);
   }
   if (key == GLFW_KEY_D && action == GLFW_PRESS) {
-    square01 *= moveRight;
+    test01 *= moveRight;
+    test02 *= moveRight;
+    test03 *= moveRight;
+    test04 *= moveRight;
+    test00.pretty_transform(moveRight);
   }
   if (key == GLFW_KEY_A && action == GLFW_PRESS) {
-    square01 *= moveLeft;
+    test01 *= moveLeft;
+    test02 *= moveLeft;
+    test03 *= moveLeft;
+    test04 *= moveLeft;
+    test00.pretty_transform(moveLeft);
   } 
   if (key == GLFW_KEY_W && action == GLFW_PRESS) {
-    square01 *= moveUp;
+    test01 *= moveUp;
+    test02 *= moveUp;
+    test03 *= moveUp;
+    test04 *= moveUp;
+    test00.pretty_transform(moveUp);
   }
   if (key == GLFW_KEY_S && action == GLFW_PRESS) {
-    square01 *= moveDown;
+    test01 *= moveDown;
+    test02 *= moveDown;
+    test03 *= moveDown;
+    test04 *= moveDown;
+    test00.pretty_transform(moveDown);
+  }
+  if (key == GLFW_KEY_R && action == GLFW_PRESS) {
+    test01 *= moveBack;
+    test02 *= moveBack;
+    test03 *= moveBack;
+    test04 *= moveBack;
+    test00.pretty_transform(moveBack);
+  }
+  if (key == GLFW_KEY_F && action == GLFW_PRESS) {
+    test01 *= moveFront;
+    test02 *= moveFront;
+    test03 *= moveFront;
+    test04 *= moveFront;
+    test00.pretty_transform(moveFront);
   }
   if (key == GLFW_KEY_Z && action == GLFW_PRESS) {  
-    square01.pretty_transform(rotateZ);
+    test01.pretty_transform(rotateZ);
+    test02.pretty_transform(rotateZ);
+    test03.pretty_transform(rotateZ);
+    test04.pretty_transform(rotateZ);
+    test00.pretty_transform(rotateZ);
   }
   if (key == GLFW_KEY_X && action == GLFW_PRESS) {
-    square01.pretty_transform(rotateZ_);
+    test01.pretty_transform(rotateZ_);
+    test02.pretty_transform(rotateZ_);
+    test03.pretty_transform(rotateZ_);
+    test04.pretty_transform(rotateZ_);
+    test00.pretty_transform(rotateZ_);
   }
   if (key == GLFW_KEY_C && action == GLFW_PRESS) {  
-    square01.pretty_transform(rotateY);
+    test01.pretty_transform(rotateY);
+    test02.pretty_transform(rotateY);
+    test03.pretty_transform(rotateY);
+    test04.pretty_transform(rotateY);
+    test00.pretty_transform(rotateY);
   }
   if (key == GLFW_KEY_V && action == GLFW_PRESS) {
-    square01.pretty_transform(rotateY_);
+    test01.pretty_transform(rotateY_);
+    test02.pretty_transform(rotateY_);
+    test03.pretty_transform(rotateY_);
+    test04.pretty_transform(rotateY_);
+    test00.pretty_transform(rotateY_);
   }
   if (key == GLFW_KEY_B && action == GLFW_PRESS) {  
-    square01.pretty_transform(rotateX);
+    test01.pretty_transform(rotateX);
+    test02.pretty_transform(rotateX);
+    test03.pretty_transform(rotateX);
+    test04.pretty_transform(rotateX);
+    test00.pretty_transform(rotateX);
   }
   if (key == GLFW_KEY_N && action == GLFW_PRESS) {
-    square01.pretty_transform(rotateX_);
+    test01.pretty_transform(rotateX_);
+    test02.pretty_transform(rotateX_);
+    test03.pretty_transform(rotateX_);
+    test04.pretty_transform(rotateX_);
+    test00.pretty_transform(rotateX_);
   }
   if (key == GLFW_KEY_E && action == GLFW_PRESS) {
-    //cubo1.cubo.scale_around_center(scaleUp);
-    square01.pretty_transform(scaleUp);
+    test01.pretty_transform(scaleUp);
+    test02.pretty_transform(scaleUp);
+    test03.pretty_transform(scaleUp);
+    test04.pretty_transform(scaleUp);
+    test00.pretty_transform(scaleUp);
   }
   if (key == GLFW_KEY_Q && action == GLFW_PRESS) {
-    //cubo1.cubo.scale_around_center(scaleDown);
-    square01.pretty_transform(scaleDown);
+    test01.pretty_transform(scaleDown);
+    test02.pretty_transform(scaleDown);
+    test03.pretty_transform(scaleDown);
+    test04.pretty_transform(scaleDown);
+    test00.pretty_transform(scaleDown);
   }
-  if (key == GLFW_KEY_O && action == GLFW_PRESS) {
-    //cubo1.cubo *= moveRight;
-    //cubo1.cubo.scale_around_center(scaleDown);
-    //cubo1.cubo.rotate_around_center(rotateZ);
-  }
-  if (key == GLFW_KEY_L && action == GLFW_PRESS) {
-    //cubo1.cubo *= moveDown;
-    //cubo1.cubo.scale_around_center(scaleUp);
-    //cubo1.cubo.rotate_around_center(rotateZ);
-  }
-  if (key == GLFW_KEY_K && action == GLFW_PRESS) {
-    //cubo1.cubo *= moveLeft;
-    //cubo1.cubo.scale_around_center(scaleDown);
-    //cubo1.cubo.rotate_around_center(rotateZ);
-  }
-  if (key == GLFW_KEY_I && action == GLFW_PRESS) {
-    //cubo1.cubo *= moveUp;
-    //cubo1.cubo.scale_around_center(scaleUp);
-    //cubo1.cubo.rotate_around_center(rotateZ);
-  }
-  square01.update_buffer();
+  test01.update_buffer();
+  test02.update_buffer();
+  test03.update_buffer();
+  test04.update_buffer();
+  test00.update_buffer();
 }
