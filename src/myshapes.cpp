@@ -70,10 +70,6 @@ void shape::build() {
   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
   glEnableVertexAttribArray(2);
   glBindVertexArray(0);		
-
-  if (textures) {
-    //glBindTexture(GL_TEXTURE_2D, TXT);
-  }
 }
 
 void shape::load_txt(const char* path) {

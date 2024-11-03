@@ -12,15 +12,17 @@
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_WIDTH = 1080;
+const unsigned int SCR_HEIGHT = 920;
+
+bool texxx = 1;
 
 float d_test01 = 0.05;
-cube test01(point( 0.5f, 0.5f,0.0f),d_test01);
-cube test02(point(-0.5f, 0.5f,0.0f),d_test01);
-cube test03(point( 0.5f,-0.5f,0.0f),d_test01);
+cube test01(point( 0.5f, 0.5f,0.0f),d_test01,0,0,0,0,0,0,0);
+cube test02(point(-0.5f, 0.5f,0.0f),d_test01,1,0,0,0,0,0,0);
+cube test03(point( 0.5f,-0.5f,0.0f),d_test01,2,0,0,0,0,0,0);
 cube test04(point(-0.5f,-0.5f,0.0f),d_test01);
-rubiks test00(point(0,0,0),0.2);
+rubiks test00(point(0,0,0),0.2,0);
 
 int main() {
   std::vector<shape*> shapes;
@@ -68,8 +70,14 @@ int main() {
   glDeleteShader(fragmentShader);
 
   test00.build();
+  test01.load_txt("../learnopengl/atlas.jpg");
+  test01.bind_textures();
   test01.build();
+  test02.load_txt("../learnopengl/atlas.jpg");
+  test02.bind_textures();
   test02.build();
+  test03.load_txt("../learnopengl/atlas.jpg");
+  test03.bind_textures();
   test03.build();
   test04.build();
 
@@ -98,8 +106,10 @@ int main() {
 			glDrawElements(GL_TRIANGLES, s->indicesTriangles.size(), GL_UNSIGNED_INT, 0);	
     }
     for (auto& s : test00.pieces) {
-			glUniform1i(glGetUniformLocation(shaderProgram, "useTexture"), s->textures);
-			s->bind_textures();
+      if (texxx) {
+        glUniform1i(glGetUniformLocation(shaderProgram, "useTexture"), s->textures);
+			  s->bind_textures();
+      }
 			glBindVertexArray(s->VAO);
 			glBindBuffer(GL_ARRAY_BUFFER, s->VBO);
 			glBufferData(GL_ARRAY_BUFFER, s->vertices.size() * sizeof(float), s->vertices.data(), GL_STATIC_DRAW);
@@ -223,6 +233,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     test03.pretty_transform(scaleDown);
     test04.pretty_transform(scaleDown);
     test00.pretty_transform(scaleDown);
+  }
+  if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+    texxx = !texxx;
   }
   test01.update_buffer();
   test02.update_buffer();
